@@ -13,7 +13,7 @@ export const TodoList = ({repository}: TodoListProps) => {
 
   useEffect(() => {
     actions.fetchAll();
-  }, [actions]);
+  }, []);
 
   return (
     <div className="h-100 w-50 m-auto">{ isLoading ?

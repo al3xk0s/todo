@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, useState } from "react";
+import { Dispatch, Reducer, createContext, useContext, useReducer, useRef, useState } from "react";
 import { MyModal } from "./Modal";
 
 export interface ModalProps {
@@ -9,38 +9,44 @@ export interface ModalProps {
   }
 }
 
-const useModalState = (initial: boolean | undefined = undefined) => {
-  const [modalOpen, setOpened] = useState(initial);
-  const propsRef = useRef<ModalProps | undefined>(undefined);
+interface ModalAction {
+  type: 'show' | 'hide',
+  props?: ModalProps,
+}
 
+interface ModalState {
+  visible: boolean;
+  props?: ModalProps,
+}
+
+const modalReducer = (state: ModalState, action: ModalAction) : ModalState => {
+  if(action.type === 'show') return { ...state, visible: true, props: action.props }
+  if(action.type === 'hide') return { ...state, visible: false, props: undefined };
+
+  return state;
+}
+
+const getModalState = (state: ModalState, dispatch: Dispatch<ModalAction>) => {
   return {
-    modalOpen,
-    openModal: (props: ModalProps) => {
-      propsRef.current = props;
-      setOpened(true);
-    },
-    closeModal: () => {
-      propsRef.current = undefined;
-      setOpened(false);
-    },
-    propsRef,
+    modalOpen: state.visible,
+    props: state.props,
+    openModal: (props: ModalProps) => dispatch({type: 'show', props}),
+    closeModal: () => dispatch({type: 'hide'})
   }
 }
 
-export type ModalState = ReturnType<typeof useModalState>;
-
-const ModalContext = createContext<ModalState | undefined>(undefined);
+const ModalContext = createContext<ReturnType<typeof getModalState> | undefined>(undefined);
 
 interface ModalProviderProps {
   children?: React.ReactNode,
-  initialValue?: boolean,
 }
 
-export const ModalProvider = ({children, initialValue}: ModalProviderProps) => {
-  const state = useModalState(initialValue ?? false);
+export const ModalProvider = ({children}: ModalProviderProps) => {
+  const [state, dispatch] = useReducer(modalReducer, {visible: false});
+  const modalState = getModalState(state, dispatch);
 
   return (
-    <ModalContext.Provider value={state}>
+    <ModalContext.Provider value={modalState}>
       <MyModal />
       {children}
     </ModalContext.Provider>

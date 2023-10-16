@@ -2,10 +2,10 @@ import clsx from "clsx";
 import { useModal } from "./ModalProvider";
 
 export const MyModal = () => {
-  const {modalOpen, closeModal, propsRef: props} = useModal();
-  if(props.current == null || !modalOpen) return null;
+  const {modalOpen, closeModal, props} = useModal();
+  if(props == null || !modalOpen) return null;
 
-  const {contentSize, children} = props.current!;
+  const {contentSize, children} = props!;
 
   let {height, width} = contentSize ?? {};
   const defaultContentSize = '75%';
