@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { useModal } from "./ModalProvider";
+import { containsAnyClass, elementContainsAnyClass } from "../../../shared/handlers/TargetValidators";
 
 export const MyModal = () => {
   const {modalOpen, closeModal, props} = useModal();
@@ -15,11 +16,10 @@ export const MyModal = () => {
   const canvasClass = 'modal-canvas';
 
   const onClickToModalCanvas = (ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if(!(ev.target as HTMLDivElement)?.classList?.contains(canvasClass) ?? false) return;
+    if(!elementContainsAnyClass(ev.target, canvasClass)) return;
     closeModal();
   }
 
-  const display = modalOpen ? 'flex' : 'none';
   return (
     <div className={clsx(canvasClass, 'd-flex')} onClick={onClickToModalCanvas} style={{zIndex: 10000, position: 'fixed', backgroundColor: 'rgba(128, 128, 128, 0.5)', height: '100vh', width: '100vw'}}>
       <div className="m-auto" style={{backgroundColor: 'white', height: height, width: width, boxShadow: 'box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, .2)'}}>

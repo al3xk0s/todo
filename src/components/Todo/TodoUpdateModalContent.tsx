@@ -2,6 +2,8 @@ import React, { ReactNode, useState } from "react";
 import { ITodo, UpdateTodoDTO } from "../../models/Todo";
 import clsx from "clsx";
 import { useModal } from "../common/modal/ModalProvider";
+import { IHasValue, InputStateBind, useStateInput } from "../../hooks/common/useInput";
+import { containsAnyClass, elementContainsAnyClass } from "../../shared/handlers/TargetValidators";
 
 interface TodoUpdateModalContentProps {
   todo: ITodo;
@@ -19,8 +21,8 @@ export const TodoUpdateModalContent = ({todo, update}: TodoUpdateModalContentPro
 
   const [editMode, setEditMode] = useState(EditMode.none);
 
-  const [title, setTitle] = useState(todo.title);
-  const [description, setDescription] = useState(todo.description ?? '');
+  const {value: title, bind: titleBind} = useStateInput(todo.title);
+  const {value: description, bind: descriptionBind} = useStateInput<IHasValue>(todo.description ?? '');
 
   const targetContentClass = 'todo-modal-content';
   const targetButtonDiv = 'todo-modal-btn-div';
@@ -38,17 +40,13 @@ export const TodoUpdateModalContent = ({todo, update}: TodoUpdateModalContentPro
   const cancel = () => closeModal();
 
   const onClickToContentArea = (ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const classList = (ev.target as HTMLDivElement).classList;
-    const isTargetElement = (classList?.contains(targetButtonDiv) ?? false) || 
-    (classList?.contains(targetContentClass) ?? false)
-
-    if(!isTargetElement) return;
+    if(!elementContainsAnyClass(ev.target, targetButtonDiv, targetContentClass)) return;
 
     setEditMode(EditMode.none);
   }
 
-  const titleElement = getTitleElement(editMode, title, setTitle, setEditMode);
-  const descriptionElement = getDescriptionElement(editMode, description, setDescription, setEditMode);
+  const titleElement = getTitleElement(editMode, titleBind, setEditMode);
+  const descriptionElement = getDescriptionElement(editMode, descriptionBind, setEditMode);
 
   return (
     <div onClick={onClickToContentArea} className={clsx('d-flex flex-column align-items-start p-3 h-100 w-100', targetContentClass)}>
@@ -72,11 +70,10 @@ interface InputComponentProps {
   isInput: boolean,
   rowsCount: number,
   setIsInput: (value: boolean) => void,
-  text: string,
-  setText: (t: string) => void,
+  inputBind: InputStateBind,
 }
 
-const InputComponent = ({isInput, text, setText, children, setIsInput, rowsCount}: InputComponentProps) => {
+const InputComponent = ({isInput, inputBind, children, setIsInput, rowsCount}: InputComponentProps) => {
   const supressFormEvent = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
     setIsInput(false);
@@ -87,8 +84,8 @@ const InputComponent = ({isInput, text, setText, children, setIsInput, rowsCount
       { isInput ?
           <form onSubmit={supressFormEvent} className="h-100 w-100">
              { rowsCount <= 1 ?
-                <input className="form-control" value={text} onChange={(ev) => setText(ev.target.value)} /> :
-                <textarea className="form-control h-100 w-100" value={text} onChange={(ev) => setText(ev.target.value)} />
+                <input className="form-control" {...inputBind} /> :
+                <textarea className="form-control h-100 w-100" {...inputBind} />
               }
           </form> :
           children
@@ -97,27 +94,27 @@ const InputComponent = ({isInput, text, setText, children, setIsInput, rowsCount
   )     
 }
 
-function getDescriptionElement(editMode: EditMode, description: string, setDescription: React.Dispatch<React.SetStateAction<string>>, setEditMode: React.Dispatch<React.SetStateAction<EditMode>>) {
+function getDescriptionElement(editMode: EditMode, descriptionStateBind: InputStateBind<IHasValue>, setEditMode: React.Dispatch<React.SetStateAction<EditMode>>) {
+  const {value: description} = descriptionStateBind;
+
   return <InputComponent
     rowsCount={3}
     isInput={editMode === EditMode.decs}
-    text={description}
-    setText={setDescription}
+    inputBind={descriptionStateBind}
     setIsInput={(value) => value ? setEditMode(EditMode.decs) : setEditMode(EditMode.none)}
   >
     <h5 className="subtitle text-wrap h-100 text-left" style={{ float: 'left', color: description.length === 0 ? 'grey' : undefined }}>{description.length === 0 ? 'Нет описания. Добавим?' : description}</h5>
   </InputComponent>;
 }
 
-function getTitleElement(editMode: EditMode, title: string, setTitle: React.Dispatch<React.SetStateAction<string>>, setEditMode: React.Dispatch<React.SetStateAction<EditMode>>) {
+function getTitleElement(editMode: EditMode, titleBind: InputStateBind<HTMLInputElement>, setEditMode: React.Dispatch<React.SetStateAction<EditMode>>) {
   return <InputComponent
     rowsCount={1}
     isInput={editMode === EditMode.title}
-    text={title}
-    setText={setTitle}
+    inputBind={titleBind as InputStateBind}
     setIsInput={(value) => value ? setEditMode(EditMode.title) : setEditMode(EditMode.none)}
   >
-    <h3 className="title text-wrap h-100 text-left " style={{ float: 'left' }}>{title}</h3>
+    <h3 className="title text-wrap h-100 text-left " style={{ float: 'left' }}>{titleBind.value}</h3>
   </InputComponent>;
 }
 

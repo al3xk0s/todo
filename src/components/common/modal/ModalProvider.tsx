@@ -9,41 +9,30 @@ export interface ModalProps {
   }
 }
 
-interface ModalAction {
-  type: 'show' | 'hide',
-  props?: ModalProps,
-}
-
 interface ModalState {
-  visible: boolean;
+  visible: boolean,
   props?: ModalProps,
 }
 
-const modalReducer = (state: ModalState, action: ModalAction) : ModalState => {
-  if(action.type === 'show') return { ...state, visible: true, props: action.props }
-  if(action.type === 'hide') return { ...state, visible: false, props: undefined };
+const useModalState = () => {
+  const [state, setState] = useState<ModalState>({visible: true});
 
-  return state;
-}
-
-const getModalState = (state: ModalState, dispatch: Dispatch<ModalAction>) => {
   return {
     modalOpen: state.visible,
     props: state.props,
-    openModal: (props: ModalProps) => dispatch({type: 'show', props}),
-    closeModal: () => dispatch({type: 'hide'})
+    openModal: (props: ModalProps) => setState({visible: true, props}),
+    closeModal: () => setState({visible: false})
   }
 }
 
-const ModalContext = createContext<ReturnType<typeof getModalState> | undefined>(undefined);
+const ModalContext = createContext<ReturnType<typeof useModalState> | undefined>(undefined);
 
 interface ModalProviderProps {
   children?: React.ReactNode,
 }
 
 export const ModalProvider = ({children}: ModalProviderProps) => {
-  const [state, dispatch] = useReducer(modalReducer, {visible: false});
-  const modalState = getModalState(state, dispatch);
+  const modalState = useModalState();
 
   return (
     <ModalContext.Provider value={modalState}>
