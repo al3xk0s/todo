@@ -1,19 +1,20 @@
 import { ReactNode, useState } from "react";
-import { ITodo, UpdateTodoDTO } from "../../models/Todo";
+import { ITodo, UpdateTodoDTO } from "../models/Todo";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import clsx from "clsx";
-import { TodoUpdateModalContent } from "./TodoUpdateModalContent";
-import { useModal } from "../common/modal/ModalProvider";
+import { UpdateTodoModal } from "../../../features/todo/update/UpdateTodoModal";
+import { useModal } from "../../../shared/ui/modal/useModal";
 
 export interface TodoProps {
   readonly todo: ITodo;
-  readonly update: (updateDTO: UpdateTodoDTO) => void;
-  readonly remove: () => void;
+  readonly onUpdate: (updateDTO: UpdateTodoDTO) => void;
+  readonly onRemove: () => void;
 }
 
-export const Todo = ({todo, update, remove}: TodoProps) => {
+export const Todo = ({todo, onUpdate: update, onRemove: remove}: TodoProps) => {
   const [isDoneState, setDoneState] = useState(todo.isDone);
+  const {openModal} = useModal();
 
   const onClick = () => {
     setDoneState((prev) => {
@@ -27,10 +28,9 @@ export const Todo = ({todo, update, remove}: TodoProps) => {
   const buttonSize = 35;
   const iconSize = buttonSize * 0.55;
 
-  const {openModal} = useModal();
   const openUpdateTodoModal = () => {
     openModal({
-      children: <TodoUpdateModalContent todo={todo} update={update}/>
+      children: <UpdateTodoModal todo={todo} update={update}/>
     });
   }
 

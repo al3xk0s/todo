@@ -1,13 +1,11 @@
 import { FormEvent, useRef } from "react";
-import { TodoActions } from "../../hooks/useTodo";
-import { useRefInput, useStateInput } from "../../hooks/common/useInput";
+import { useRefInput } from "../../../../shared/hooks/useInput";
+import { useAppDispatch } from "../../../../app/hooks";
+import { createTodo } from "../../redux/reducers/todoReducer";
 
-interface AddTodoProps {
-  addTodo: TodoActions['add'];
-}
-
-export const AddTodo = ({addTodo}: AddTodoProps) => {
+export const CreateTodo = () => {
   const {ref, bind} = useRefInput<HTMLInputElement>();
+  const dispatch = useAppDispatch();
 
   const onSubmit = (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
@@ -15,7 +13,8 @@ export const AddTodo = ({addTodo}: AddTodoProps) => {
     const trimedValue = ref.current?.value.trim();
     if(trimedValue == null || trimedValue.length === 0) return;
 
-    addTodo({title: trimedValue});
+    dispatch(createTodo({dto: {title: trimedValue}}));
+    if(ref.current) ref.current.value = '';
   };
 
   return (

@@ -1,9 +1,9 @@
 import React, { ReactNode, useState } from "react";
-import { ITodo, UpdateTodoDTO } from "../../models/Todo";
+import { ITodo, UpdateTodoDTO } from "../../../entities/todo/models/Todo";
 import clsx from "clsx";
-import { useModal } from "../common/modal/ModalProvider";
-import { IHasValue, InputStateBind, useStateInput } from "../../hooks/common/useInput";
-import { containsAnyClass, elementContainsAnyClass } from "../../shared/handlers/TargetValidators";
+import { useModal } from "../../../shared/ui/modal/useModal";
+import { elementContainsAnyClass } from "../../../shared/handlers/TargetValidators";
+import { IHasValue, InputStateBind, useStateInput } from "../../../shared/hooks/useInput";
 
 interface TodoUpdateModalContentProps {
   todo: ITodo;
@@ -16,7 +16,7 @@ enum EditMode {
   none
 }
 
-export const TodoUpdateModalContent = ({todo, update}: TodoUpdateModalContentProps) => {
+export const UpdateTodoModal = ({todo, update}: TodoUpdateModalContentProps) => {
   const {closeModal} = useModal();
 
   const [editMode, setEditMode] = useState(EditMode.none);

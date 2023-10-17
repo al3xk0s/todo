@@ -1,10 +1,10 @@
-import { CreateTodoDTO, ITodo, UpdateTodoDTO } from "../models/Todo";
-import { v4 as uuid } from 'uuid';
+import { NamedEntity } from "../../../shared/services/ServiceLocator";
+import { ITodo, CreateTodoDTO, UpdateTodoDTO } from "../models/Todo";
 
 export interface ITodoRepository {
   getAll() : Promise<ITodo[]>;
-  createTodo(createDTO: CreateTodoDTO) : Promise<void>;
-  updateTodo(id: string, updateDTO: UpdateTodoDTO) : Promise<void>;
+  createTodo(createDTO: CreateTodoDTO) : Promise<ITodo>;
+  updateTodo(id: string, updateDTO: UpdateTodoDTO) : Promise<ITodo>;
   removeTodo(id: string) : Promise<void>;
 }
 
@@ -16,7 +16,7 @@ export class TodoRepository implements ITodoRepository {
     return await res.json();
   }
 
-  async createTodo(createDTO: CreateTodoDTO): Promise<void> {
+  async createTodo(createDTO: CreateTodoDTO): Promise<ITodo> {
     const res = await fetch(
       `${this._path}/todo`, {
       method: 'POST',
@@ -28,7 +28,7 @@ export class TodoRepository implements ITodoRepository {
     return await res.json();
   }
 
-  async updateTodo(id: string, updateDTO: UpdateTodoDTO): Promise<void> {
+  async updateTodo(id: string, updateDTO: UpdateTodoDTO): Promise<ITodo> {
     const res = await fetch(
       `${this._path}/todo/${id}`, {
       method: 'POST',
@@ -37,6 +37,8 @@ export class TodoRepository implements ITodoRepository {
       },
       body: JSON.stringify(updateDTO),
     });
+
+    return await res.json();
   }
 
   async removeTodo(id: string): Promise<void> {
@@ -46,3 +48,5 @@ export class TodoRepository implements ITodoRepository {
     });
   }
 }
+
+export const DITodoRepository : NamedEntity<ITodoRepository> = { token: 'DITodoRepository' };

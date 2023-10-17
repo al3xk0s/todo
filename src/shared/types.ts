@@ -1,0 +1,1 @@
+export type ObjectMap<V> = { [k: string] : V }

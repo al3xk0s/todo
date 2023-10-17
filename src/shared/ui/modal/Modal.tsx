@@ -1,9 +1,13 @@
 import clsx from "clsx";
-import { useModal } from "./ModalProvider";
-import { containsAnyClass, elementContainsAnyClass } from "../../../shared/handlers/TargetValidators";
+import { useModal } from "./useModal";
+import { elementContainsAnyClass } from "../../handlers/TargetValidators";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { modalStateSelector } from "./modalSelectors";
 
 export const MyModal = () => {
-  const {modalOpen, closeModal, props} = useModal();
+  const {modalOpen, props} = useAppSelector(modalStateSelector);
+  const {closeModal} = useModal();
+
   if(props == null || !modalOpen) return null;
 
   const {contentSize, children} = props!;
