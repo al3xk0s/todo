@@ -1,3 +1,7 @@
+/** Импортировать why-did-you-render в начале файла */
+import "./wdyr";
+
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -8,8 +12,8 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
+  
       <App />
-  </React.StrictMode>
+  
 );
 

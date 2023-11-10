@@ -1,4 +1,4 @@
-import { NamedEntity } from "../../../shared/services/ServiceLocator";
+import { DINamedEntity } from "../../../shared/services/ServiceLocator";
 import { ITodo } from "../models/Todo";
 
 export type TodoFilter = (todos: ITodo[]) => ITodo[];
@@ -27,4 +27,4 @@ export interface NamedTodoFilter {
   readonly exec: TodoFilter,
 }
 
-export const DITodoFilters : NamedEntity<NamedTodoFilter[]> = {token: 'DITodoFilters'};
+export const DITodoFilters : DINamedEntity<NamedTodoFilter[]> = {token: 'DITodoFilters'};

@@ -6,6 +6,7 @@ import { TodoRepository, ITodoRepository, DITodoRepository } from "../../../../e
 import { IAsyncState } from "../../../../shared/models/state";
 import { ObjectMap } from "../../../../shared/types";
 import { IOC } from "../../../../shared/services/ServiceLocator";
+import { createTodoTitleReducer, updateCreateTodoTitle } from "./createTodoTitleReducer";
 
 export interface TodoState extends IAsyncState<ObjectMap<ITodo>> {}
 
@@ -138,4 +139,5 @@ const todoSlice = createSlice({
 export const todosReducer = combineReducers({
   state: todoSlice.reducer,
   filter: sortTodoReducer,
+  createTodoTitle: createTodoTitleReducer,
 });

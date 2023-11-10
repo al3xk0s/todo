@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { TodoFilter, timestampCompletedFirstTodoFilter, completedOnlyTodoFilter, uncompletedOnlyTodoFilter, timestampTodoSorter, NamedTodoFilter, TodoFilterName, DITodoFilters } from "../../../../entities/todo/services/TodoFilter";
 import { IOC } from "../../../../shared/services/ServiceLocator";
+import { DITodoFilters } from "../../../../entities/todo/services/TodoFilter";
 
 export interface FilterTodoState {
   currentIndex: number,

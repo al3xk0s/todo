@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { ITodo, UpdateTodoDTO } from "../../../entities/todo/models/Todo";
-import { Todo } from "../../../entities/todo/ui/Todo";
+import { AnimatedTodo, Todo } from "../../../entities/todo/ui/Todo";
 import { TodoWrapper } from "../../../entities/todo/ui/TodoWrapper";
 import { CreateTodo } from "../create/ui/CreateTodo";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
@@ -16,9 +16,11 @@ export const TodoListBody = () => {
     const onRemove = () => dispatch(removeTodo({id: e.id}));
 
     return (
-      <TodoWrapper key={e.id}>
-        <Todo todo={e} onUpdate={onUpdate} onRemove={onRemove}/>
-      </TodoWrapper>
+      <AnimatedTodo key={e.id} todoID={e.id}>
+        <TodoWrapper>
+          <Todo todo={e} onUpdate={onUpdate} onRemove={onRemove}/>
+        </TodoWrapper>
+      </AnimatedTodo>
     )
   }
 

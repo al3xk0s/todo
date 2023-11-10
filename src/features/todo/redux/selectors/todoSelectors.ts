@@ -19,3 +19,4 @@ export const filtredTodosSelector = createSelector(
   (todos, currentFilter) => currentFilter.exec(todos),
 );
 
+export const savedCreateTodoTitleSelector = (s: RootState) => s.todos.createTodoTitle.value;

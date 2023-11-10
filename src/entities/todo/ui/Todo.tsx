@@ -5,6 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import clsx from "clsx";
 import { UpdateTodoModal } from "../../../features/todo/update/UpdateTodoModal";
 import { useModal } from "../../../shared/ui/modal/useModal";
+import { AnimatePresence, motion } from "framer-motion";
 
 export interface TodoProps {
   readonly todo: ITodo;
@@ -13,16 +14,8 @@ export interface TodoProps {
 }
 
 export const Todo = ({todo, onUpdate: update, onRemove: remove}: TodoProps) => {
-  const [isDoneState, setDoneState] = useState(todo.isDone);
   const {openModal} = useModal();
-
-  const onClick = () => {
-    setDoneState((prev) => {
-      const newValue = !prev;
-      update({isDone: newValue});
-      return newValue;
-    })
-  };
+  const onClick = () => update({isDone: !todo.isDone});
   
   const titleElement = <p className="card-title mb-0 text-wrap">{todo.title}</p>;
   const buttonSize = 35;
@@ -36,7 +29,7 @@ export const Todo = ({todo, onUpdate: update, onRemove: remove}: TodoProps) => {
 
   return (
     <div id={todo.id} className="card d-flex flex-row align-items-center justify-content-between p-2">
-      <div className="flex-wrap d-flex justify-content-start" style={{width: '90%'}} onClick={onClick}>{isDoneState ? <del>{titleElement}</del> : titleElement }</div>      
+      <div className="flex-wrap d-flex justify-content-start" style={{width: '90%'}} onClick={onClick}>{todo.isDone ? <del>{titleElement}</del> : titleElement }</div>      
       <div className="d-flex justify-content-end">
         <TodoButton size={buttonSize} isPrimary={true} onClick={openUpdateTodoModal}>
           <EditIcon style={{height: iconSize, width: iconSize}}/>
@@ -62,4 +55,23 @@ const TodoButton = ({onClick, children, size, isPrimary}: TodoButtonProps) => {
   return (
     <button className={className} onClick={onClick} style={{width: size, height: size}}>{children}</button>
   );
+}
+
+export const AnimatedTodo = ({todoID, children}: { todoID: string, children: ReactNode }) => {
+  return (
+    <AnimatePresence initial={false} mode="popLayout">
+      <motion.div
+        key={todoID}
+        animate={{
+          height: 'auto',
+          opacity: 1,
+        }}
+        exit={{
+          height: 0,
+        }}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  )
 }

@@ -1,4 +1,4 @@
-import { NamedEntity } from "../../../shared/services/ServiceLocator";
+import { DINamedEntity } from "../../../shared/services/ServiceLocator";
 import { ITodo, CreateTodoDTO, UpdateTodoDTO } from "../models/Todo";
 
 export interface ITodoRepository {
@@ -49,4 +49,4 @@ export class TodoRepository implements ITodoRepository {
   }
 }
 
-export const DITodoRepository : NamedEntity<ITodoRepository> = { token: 'DITodoRepository' };
+export const DITodoRepository : DINamedEntity<ITodoRepository> = { token: 'DITodoRepository' };
